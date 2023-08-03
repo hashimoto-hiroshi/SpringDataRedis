@@ -1,0 +1,1 @@
+INSERT INTO employee (name, department) values ('hashimoto', 'system');
