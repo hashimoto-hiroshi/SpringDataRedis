@@ -12,13 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.hash.Jackson2HashMapper;
 
-import com.example.demo.entity.Department;
-import com.example.demo.entity.Employee;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.example.demo.entity.Branch;
+import com.example.demo.entity.Person;
 
 @SpringBootTest
 class RedisTemplateServiceTest {
@@ -64,31 +60,8 @@ class RedisTemplateServiceTest {
 	}
 
 	@Test
-	void test() throws JsonProcessingException {
-		Employee employee = new Employee();
-		employee.setId(1L);
-		employee.setName("Hashimoto");
-		employee.setDepartment(Department.GENERAL);
-
-		System.out.println(employee.toString());
-
-		System.out.println("---");
-
-		JsonMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
-		System.out.println(mapper.writeValueAsString(employee));
-
-		System.out.println("---");
-
-		Jackson2HashMapper mapper1 = new Jackson2HashMapper(false);
-		mapper1.toHash(employee).entrySet().stream()
-				.forEach(e -> System.out.println("key=" + e.getKey() + ",value=" + e.getValue()));
-
-		System.out.println("---");
-
-		Jackson2HashMapper mapper2 = new Jackson2HashMapper(true);
-		mapper2.toHash(employee).entrySet().stream()
-				.forEach(e -> System.out.println("key=" + e.getKey() + ",value=" + e.getValue()));
-
+	void test() {
+		// as you like it.
 	}
 
 	@Test
@@ -108,5 +81,47 @@ class RedisTemplateServiceTest {
 
 		redisTemplateService.hset(key, map);
 		assertThat(redisTemplateService.hgetAll(key)).hasSize(2).containsAllEntriesOf(map);
+	}
+
+	@Test
+	void testHsetAndHgetallForPerson() {
+		final String key = "person";
+		Person value = new Person();
+		value.setFirstName("Hiroshi");
+		value.setLastName("Hashimoto");
+
+		redisTemplateService.hsetForPerson(key, value);
+		Person actual = redisTemplateService.hgetForPerson(key);
+
+		assertThat(actual).isEqualTo(value);
+	}
+
+	@Test
+	void testHsetAndHgetallForBranch() {
+		final String key = "branch";
+		Branch value = new Branch();
+		value.setId(3L);
+		value.setBranchNo(15);
+		value.setName("東京");
+
+		redisTemplateService.hsetForBranch(key, value);
+		Branch actual = redisTemplateService.hgetForBranch(key);
+
+		assertThat(actual).isEqualTo(value);
+	}
+
+	// TODO:
+	@Test
+	void testSetAndGetEntityToJson() {
+		final String key = "json";
+		Branch value = new Branch();
+		value.setId(9L);
+		value.setBranchNo(777);
+		value.setName("大阪");
+
+		redisTemplateService.setForEntityToJson(key, value);
+		Branch actual = redisTemplateService.getForEntityFromJson(key);
+
+		assertThat(actual).isEqualTo(value);
 	}
 }

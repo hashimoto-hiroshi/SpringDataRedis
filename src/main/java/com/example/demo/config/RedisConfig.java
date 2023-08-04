@@ -6,16 +6,18 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.hash.Jackson2HashMapper;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
-class LettuceConfig {
+class RedisConfig {
 
 	@Bean
 	LettuceConnectionFactory redisConnectionFactory() {
@@ -38,12 +40,18 @@ class LettuceConfig {
 		return template;
 	}
 
+	@Bean
 	ObjectMapper objectMapper() {
 		return JsonMapper.builder().addModule(new JavaTimeModule())
-//				.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-//				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+				.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.activateDefaultTypingAsProperty(BasicPolymorphicTypeValidator.builder().build(),
 						ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT, "@class")
 				.build();
+	}
+
+	@Bean
+	Jackson2HashMapper jackson2HashMapper() {
+		return new Jackson2HashMapper(true);
 	}
 }
