@@ -10,6 +10,7 @@ import org.springframework.data.redis.hash.Jackson2HashMapper;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -45,8 +46,10 @@ class RedisConfig {
 		return JsonMapper.builder().addModule(new JavaTimeModule())
 				.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.activateDefaultTypingAsProperty(BasicPolymorphicTypeValidator.builder().build(),
-						ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT, "@class")
+				.activateDefaultTyping(BasicPolymorphicTypeValidator.builder()
+						.allowIfSubType("com.example.demo.entity.")
+						.build(),
+						ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT, As.PROPERTY)
 				.build();
 	}
 

@@ -110,7 +110,6 @@ class RedisTemplateServiceTest {
 		assertThat(actual).isEqualTo(value);
 	}
 
-	// TODO:
 	@Test
 	void testSetAndGetEntityToJson() {
 		final String key = "json";

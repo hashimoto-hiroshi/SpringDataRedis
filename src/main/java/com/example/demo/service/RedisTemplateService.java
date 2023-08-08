@@ -77,12 +77,10 @@ public class RedisTemplateService {
 		hashOps.putAll(key, mappedHash);
 	}
 
-	// TODO:
 	public Branch getForEntityFromJson(String key) {
 		return toJsonRedisTemplate.opsForValue().get(key);
 	}
 
-	// TODO:
 	public void setForEntityToJson(String key, Branch branch) {
 		toJsonRedisTemplate.opsForValue().set(key, branch);
 	}
