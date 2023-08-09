@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import com.example.demo.entity.Branch;
 import com.example.demo.entity.Person;
 
-@SpringBootTest
+@SpringBootTest /* (properties = "spring.profiles.active=dev") */
 class RedisTemplateServiceTest {
 
 	private final RedisTemplateService redisTemplateService;
